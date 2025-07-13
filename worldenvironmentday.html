@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="pageTitle">Hari Lingkungan Hidup Sedunia 2025 - Infografis Bogor</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700;900&display=swap" rel="stylesheet">
+    <!-- Font Awesome CDN for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" xintegrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        body {
+            font-family: 'Open Sans', sans-serif; /* Changed font to Open Sans */
+            background-color: #E6F3E6; /* Light Greenish-White for fresh feel */
+            overflow-x: hidden; /* Prevent horizontal scroll due to animations */
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 450px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        @media (min-width: 640px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+        @media (min-width: 1024px) {
+            .chart-container {
+                height: 400px;
+            }
+        }
+        .flow-step {
+            position: relative;
+            padding-right: 2.5rem;
+            opacity: 0; /* Initial state for animation */
+            transform: translateY(20px); /* Initial state for animation */
+        }
+        .flow-step:not(:last-child)::after {
+            content: '→';
+            position: absolute;
+            right: 0.5rem;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.5rem;
+            color: #4682B4; /* Steel Blue for flow arrow */
+        }
+        @media (max-width: 767px) {
+            .flow-step {
+                padding-right: 0;
+                padding-bottom: 2.5rem;
+            }
+            .flow-step:not(:last-child)::after {
+                content: '↓';
+                right: 50%;
+                top: auto;
+                bottom: 0.5rem;
+                transform: translateX(50%);
+            }
+        }
+        .flag-icon {
+            width: 30px;
+            height: 20px;
+            cursor: pointer;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .flag-icon.active {
+            border: 2px solid #2E8B57; /* Primary Green for active flag */
+            box-shadow: 0 0 5px rgba(46,139,87,0.5);
+        }
+        .language-switcher {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            display: flex;
+            gap: 0.5rem;
+            z-index: 100;
+        }
+
+        /* Animations */
+        @keyframes fadeInSlideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInScaleUp {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        @keyframes fadeInSlideInLeft {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes fadeInSlideInRight {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .animate-fade-in-up {
+            animation: fadeInSlideUp 0.6s ease-out forwards;
+        }
+        .animate-fade-in-scale {
+            animation: fadeInScaleUp 0.6s ease-out forwards;
+        }
+        .animate-fade-in-left {
+            animation: fadeInSlideInLeft 0.6s ease-out forwards;
+        }
+        .animate-fade-in-right {
+            animation: fadeInSlideInRight 0.6s ease-out forwards;
+        }
+        .animate-flow-step {
+            animation: fadeInSlideUp 0.5s ease-out forwards;
+        }
+
+        /* Header Background Image Styling */
+        .header-bg {
+            background-color: #2E8B57; /* Explicitly set dark green background color */
+            background-image: url('https://placehold.co/1200x400/1A521A'); /* Darker green placeholder, no text */
+            background-size: cover;
+            background-position: center;
+            color: white; /* Ensure text is visible on dark background */
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.7); /* Add shadow for readability */
+            position: relative;
+            overflow: hidden; /* Ensure content stays within bounds */
+        }
+        .header-bg::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0,0,0,0.3); /* Semi-transparent overlay */
+            z-index: 1;
+        }
+        .header-bg > * {
+            position: relative;
+            z-index: 2; /* Bring text and other content above the overlay */
+        }
+        .social-icon-fa {
+            font-size: 1.25rem; /* Adjust size as needed */
+            vertical-align: middle;
+            margin-right: 8px;
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <div class="language-switcher">
+        <img id="flagId" src="https://upload.wikimedia.org/wikipedia/commons/9/9f/Flag_of_Indonesia.svg" alt="Bendera Indonesia" class="flag-icon active" data-lang="id">
+        <img id="flagEn" src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Flag_of_the_United_Kingdom_%281-2%29.svg" alt="Bendera Inggris" class="flag-icon" data-lang="en">
+    </div>
+
+    <main class="container mx-auto p-4 md:p-8">
+
+        <header class="text-center py-12 header-bg">
+            <h1 class="text-4xl md:text-5xl font-black uppercase" data-lang-key="headerTitle" data-animate style="animation-delay: 0.1s;">Hari Lingkungan Hidup Sedunia 2025</h1>
+            <p class="mt-4 text-xl md:text-2xl font-bold" data-lang-key="headerSubtitle" data-animate style="animation-delay: 0.3s;">“Edukasi & Aksi untuk Masa Depan Lebih Baik”</p>
+            <div class="mt-6 flex justify-center items-center space-x-6" data-animate style="animation-delay: 0.5s;">
+                <span class="font-semibold" data-lang-key="headerLocation">📍 Taman Sempur, Bogor</span>
+                <span class="font-semibold" data-lang-key="headerDate">📅 8 Juni 2025</span>
+            </div>
+        </header>
+
+        <section id="problem" class="my-16">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold text-[#2E8B57]" data-lang-key="problemSectionTitle" data-animate>Tantangan Lingkungan Bogor</h2>
+                <p class="mt-4 max-w-3xl mx-auto text-lg text-[#2E8B57]" data-lang-key="problemSectionIntro" data-animate style="animation-delay: 0.1s;">Komunitas kita berada di titik kritis, menghadapi tekanan lingkungan yang membutuhkan tindakan segera dan kolektif. Acara ini adalah respons kami terhadap masalah lokal yang mendesak ini.</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-white p-6 rounded-xl shadow-lg text-center border-t-4 border-[#4682B4] animate-fade-in-scale" data-animate style="animation-delay: 0.2s;"> <!-- Accent Blue for border -->
+                    <span class="text-6xl">🗑️</span>
+                    <h3 class="text-2xl font-bold mt-4 text-[#2E8B57]" data-lang-key="problemWasteTitle">Peningkatan Sampah</h3>
+                    <p class="mt-2 text-gray-600" data-lang-key="problemWasteText">Tingkat sampah rumah tangga dan komersial meningkat, membebani sistem pembuangan kita dan mencemari lingkungan.</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-lg text-center border-t-4 border-[#4682B4] animate-fade-in-scale" data-animate style="animation-delay: 0.4s;"> <!-- Accent Blue for border -->
+                    <span class="text-6xl">🌳</span>
+                    <h3 class="text-2xl font-bold mt-4 text-[#2E8B57]" data-lang-key="problemGreenSpaceTitle">Penyusutan Ruang Hijau</h3>
+                    <p class="mt-2 text-gray-600" data-lang-key="problemGreenSpaceText">Pembangunan perkotaan mengurangi area hijau vital, berdampak pada keanekaragaman hayati dan kualitas hidup semua penduduk.</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-lg text-center border-t-4 border-[#4682B4] animate-fade-in-scale" data-animate style="animation-delay: 0.6s;"> <!-- Accent Blue for border -->
+                    <span class="text-6xl">💧</span>
+                    <h3 class="text-2xl font-bold mt-4 text-[#2E8B57]" data-lang-key="problemPollutionTitle">Pencemaran Air & Sungai</h3>
+                    <p class="mt-2 text-gray-600" data-lang-key="problemPollutionText">Sungai-sungai kita, urat nadi kota, semakin terkontaminasi, mengancam ekosistem dan kesehatan masyarakat.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="goals" class="my-16 bg-[#90EE90] rounded-xl p-8 md:p-12 text-[#2E8B57]"> <!-- Light Green background -->
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold text-[#2E8B57]" data-lang-key="goalsSectionTitle" data-animate>Misi Kami: Hari Penuh Dampak</h2>
+                <p class="mt-4 max-w-3xl mx-auto text-lg text-[#2E8B57]" data-lang-key="goalsSectionIntro" data-animate style="animation-delay: 0.1s;">Kami telah merancang acara komprehensif yang memadukan edukasi dengan langkah-langkah nyata. Tujuan kami ambisius namun dapat dicapai dengan dukungan komunitas dan mitra.</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+                <div class="bg-white p-6 rounded-lg shadow-md flex items-center animate-fade-in-left" data-animate style="animation-delay: 0.2s;">
+                    <span class="text-3xl mr-4 text-[#2E8B57]">✅</span>
+                    <span class="font-semibold text-gray-700" data-lang-key="goalAwareness">Meningkatkan Kesadaran Lingkungan</span>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md flex items-center animate-fade-in-right" data-animate style="animation-delay: 0.3s;">
+                    <span class="text-3xl mr-4 text-[#2E8B57]">✅</span>
+                    <span class="font-semibold text-gray-700" data-lang-key="goalBehavior">Menginspirasi Perilaku Berkelanjutan</span>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md flex items-center animate-fade-in-left" data-animate style="animation-delay: 0.4s;">
+                    <span class="text-3xl mr-4 text-[#2E8B57]">✅</span>
+                     <span class="font-semibold text-gray-700" data-lang-key="goalSolutions">Mendidik dengan Solusi Nyata</span>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md flex items-center animate-fade-in-right" data-animate style="animation-delay: 0.5s;">
+                    <span class="text-3xl mr-4 text-[#2E8B57]">✅</span>
+                     <span class="font-semibold text-gray-700" data-lang-key="goalCollaboration">Ber Kolaborasi Lintas Sektor</span>
+                </div>
+            </div>
+            
+            <h3 class="text-2xl font-bold text-center text-[#2E8B57] mb-8" data-lang-key="activitiesFlowTitle" data-animate style="animation-delay: 0.6s;">Alur Kegiatan Acara</h3>
+            <div class="flex flex-col md:flex-row justify-center items-center text-center" id="flow-steps-container">
+                <div class="flow-step" data-animate style="animation-delay: 0.7s;"><p class="font-bold text-[#2E8B57]" data-lang-key="activityWorkshops">Lokakarya</p><p class="text-sm text-gray-700" data-lang-key="activityWorkshopsSub">Sampah, Kompos</p></div>
+                <div class="flow-step" data-animate style="animation-delay: 0.8s;"><p class="font-bold text-[#2E8B57]" data-lang-key="activityExhibition">Pameran Eco</p><p class="text-sm text-gray-700" data-lang-key="activityExhibitionSub">Produk Hijau</p></div>
+                <div class="flow-step" data-animate style="animation-delay: 0.9s;"><p class="font-bold text-[#2E8B57]" data-lang-key="activityPanel">Diskusi Panel</p><p class="text-sm text-gray-700" data-lang-key="activityPanelSub">Pakar & Pemimpin</p></div>
+                <div class="flow-step" data-animate style="animation-delay: 1.0s;"><p class="font-bold text-[#2E8B57]" data-lang-key="activityArtMusic">Seni & Musik</p><p class="text-sm text-gray-700" data-lang-key="activityArtMusicSub">Pertunjukan</p></div>
+                <div class="flow-step" data-animate style="animation-delay: 1.1s;"><p class="font-bold text-[#2E8B57]" data-lang-key="activityCleanup">Aksi Bersih-bersih</p><p class="text-sm text-gray-700" data-lang-key="activityCleanupSub">(Aksi Opsional)</p></div>
+            </div>
+        </section>
+
+        <section id="participants" class="my-16">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+                <div class="text-center lg:text-left">
+                    <h2 class="text-3xl md:text-4xl font-bold text-[#2E8B57]" data-lang-key="participantsSectionTitle" data-animate>Melibatkan Seluruh Komunitas</h2>
+                    <p class="mt-4 text-lg text-[#2E8B57]" data-lang-key="participantsSectionIntro" data-animate style="animation-delay: 0.1s;">Tujuan kami adalah menyatukan beragam kelompok lebih dari 500 individu, menciptakan jaringan yang kuat untuk perubahan. Setiap kelompok memainkan peran vital dalam membangun masa depan yang berkelanjutan bagi Bogor. Grafik di samping menunjukkan target peserta dalam persentase.</p>
+                    <div class="mt-8 text-center animate-fade-in-scale" data-animate style="animation-delay: 0.3s;">
+                        <span class="text-6xl md:text-8xl font-black text-[#4682B4]" id="participantCount">0</span>
+                        <p class="text-2xl font-bold text-[#2E8B57]" data-lang-key="participantsTargetText">Target Peserta</p>
+                    </div>
+                </div>
+                <div>
+                    <div class="chart-container animate-fade-in-scale" data-animate style="animation-delay: 0.5s;">
+                        <canvas id="participantChart"></canvas>
+                    </div>
+                    <p class="text-center mt-4 text-sm text-gray-500" data-lang-key="participantsChartCaption" data-animate style="animation-delay: 0.6s;">Visualisasi rincian target audiens kami yang beragam.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="funding" class="my-16 bg-white rounded-xl shadow-lg p-8 md:p-12">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+                 <div>
+                    <div class="chart-container animate-fade-in-scale" data-animate style="animation-delay: 0.5s;">
+                        <canvas id="fundingChart"></canvas>
+                    </div>
+                     <p class="text-center mt-4 text-sm text-gray-500" data-lang-key="fundingChartCaption" data-animate style="animation-delay: 0.6s;">Tampilan proporsional bagaimana dana akan dialokasikan.</p>
+                </div>
+                <div class="text-center lg:text-left">
+                    <h2 class="text-3xl md:text-4xl font-bold text-[#2E8B57]" data-lang-key="fundingSectionTitle" data-animate>Investasi untuk Masa Depan yang Lebih Hijau</h2>
+                    <p class="mt-4 text-lg text-[#2E8B57]" data-lang-key="fundingSectionIntro" data-animate style="animation-delay: 0.1s;">Untuk menyukseskan acara ini, kami mencari dukungan finansial. Setiap kontribusi secara langsung mendanai aspek-aspek kunci acara, dari logistik hingga materi edukasi, memastikan pengalaman yang berdampak tinggi bagi semua. Grafik di samping menunjukkan alokasi dana dalam persentase.</p>
+                    <div class="mt-8 text-center bg-[#F5F5DC] p-6 rounded-lg animate-fade-in-scale" data-animate style="animation-delay: 0.3s;"> <!-- Beige background -->
+                        <p class="text-xl font-bold text-[#2E8B57]" data-lang-key="fundingGoalLabel">Total Target Dana</p>
+                        <span class="text-5xl md:text-7xl font-black text-[#4682B4]" data-lang-key="fundingGoalAmount">Rp 40,200,000</span> <!-- Steel Blue for amount -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="sponsors" class="my-16">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold text-[#2E8B57]" data-lang-key="sponsorsSectionTitle" data-animate>Manfaat Eksklusif Sponsor</h2>
+                <p class="mt-4 max-w-3xl mx-auto text-lg text-[#2E8B57]" data-lang-key="sponsorsSectionIntro" data-animate style="animation-delay: 0.1s;">Bermitra dengan kami dan dapatkan eksposur signifikan sambil menunjukkan komitmen Anda terhadap tanggung jawab sosial perusahaan. Kami menawarkan berbagai manfaat untuk memamerkan merek Anda kepada audiens yang berdedikasi dan terlibat.</p>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="bg-white p-6 rounded-lg shadow-md border-l-4 border-[#4682B4] animate-fade-in-scale" data-animate style="animation-delay: 0.2s;"> <!-- Accent Blue for border -->
+                    <h3 class="font-bold text-lg text-[#2E8B57]" data-lang-key="sponsorBenefit1Title">🎁 Logo di Promosi</h3>
+                    <p class="text-gray-600 mt-1" data-lang-key="sponsorBenefit1Text">Merek Anda ditampilkan di semua materi acara digital dan fisik.</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md border-l-4 border-[#4682B4] animate-fade-in-scale" data-animate style="animation-delay: 0.3s;"> <!-- Accent Blue for border -->
+                    <h3 class="font-bold text-lg text-[#2E8B57]" data-lang-key="sponsorBenefit2Title">🎪 Booth Acara Khusus</h3>
+                    <p class="text-gray-600 mt-1" data-lang-key="sponsorBenefit2Text">Ruang khusus untuk memamerkan produk atau layanan ramah lingkungan Anda.</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md border-l-4 border-[#4682B4] animate-fade-in-scale" data-animate style="animation-delay: 0.4s;"> <!-- Accent Blue for border -->
+                    <h3 class="font-bold text-lg text-[#2E8B57]" data-lang-key="sponsorBenefit3Title">🎙️ Penyebutan Verbal</h3>
+                    <p class="text-gray-600 mt-1" data-lang-key="sponsorBenefit3Text">Pengakuan dari panggung selama momen-momen penting acara.</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md border-l-4 border-[#4682B4] animate-fade-in-scale" data-animate style="animation-delay: 0.5s;"> <!-- Accent Blue for border -->
+                    <h3 class="font-bold text-lg text-[#2E8B57]" data-lang-key="sponsorBenefit4Title">📣 Eksposur Media & Sosial</h3>
+                    <p class="text-gray-600 mt-1" data-lang-key="sponsorBenefit4Text">Termasuk dalam siaran pers dan fitur di saluran media sosial kami.</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md border-l-4 border-[#4682B4] animate-fade-in-scale" data-animate style="animation-delay: 0.6s;"> <!-- Accent Blue for border -->
+                    <h3 class="font-bold text-lg text-[#2E8B57]" data-lang-key="sponsorBenefit5Title">🎤 Sesi Berbicara Opsional</h3>
+                    <p class="text-gray-600 mt-1" data-lang-key="sponsorBenefit5Text">Kesempatan untuk berbagi visi perusahaan Anda dengan audiens kami.</p>
+                </div>
+                 <div class="bg-white p-6 rounded-lg shadow-md border-l-4 border-[#4682B4] animate-fade-in-scale" data-animate style="animation-delay: 0.7s;"> <!-- Accent Blue for border -->
+                    <h3 class="font-bold text-lg text-[#2E8B57]" data-lang-key="sponsorBenefit6Title">🤝 Jaringan & Kolaborasi</h3>
+                    <p class="text-gray-600 mt-1" data-lang-key="sponsorBenefit6Text">Terhubung dengan pemimpin komunitas, bisnis hijau, dan warga yang terlibat.</p>
+                </div>
+            </div>
+        </section>
+
+        <footer class="mt-24 bg-[#2E8B57] text-white rounded-t-xl p-8 text-center" data-animate style="animation-delay: 0.8s;"> <!-- Primary Green background -->
+            <h2 class="text-3xl font-bold" data-lang-key="footerCallToActionTitle">🌱 Bergabunglah dengan Kami dan Buat Perbedaan!</h2>
+            <p class="mt-4 max-w-2xl mx-auto" data-lang-key="footerCallToActionText">Mari berkolaborasi untuk membangun Bogor yang lebih hijau dan sehat. Dukungan Anda sangat penting untuk perubahan positif.</p>
+            <div class="mt-8 flex flex-col md:flex-row justify-center items-center space-y-4 md:space-y-0 md:space-x-8">
+                <span data-lang-key="footerWhatsapp"></span>
+                <span data-lang-key="footerEmail"></span>
+                <span data-lang-key="footerInstagram"></span>
+                <span data-lang-key="footerTiktok"></span>
+            </div>
+        </footer>
+
+    </main>
+
+    <script>
+        let participantChartInstance = null;
+        let fundingChartInstance = null;
+
+        const translations = {
+            id: {
+                pageTitle: "Hari Lingkungan Hidup Sedunia 2025 - Infografis Bogor",
+                headerTitle: "Hari Lingkungan Hidup Sedunia 2025",
+                headerSubtitle: "“Edukasi & Aksi untuk Masa Depan Lebih Baik”",
+                headerLocation: "📍 Taman Sempur, Bogor",
+                headerDate: "📅 8 Juni 2025",
+                problemSectionTitle: "Tantangan Lingkungan Bogor",
+                problemSectionIntro: "Komunitas kita berada di titik kritis, menghadapi tekanan lingkungan yang membutuhkan tindakan segera dan kolektif. Acara ini adalah respons kami terhadap masalah lokal yang mendesak ini.",
+                problemWasteTitle: "Peningkatan Sampah",
+                problemWasteText: "Tingkat sampah rumah tangga dan komersial meningkat, membebani sistem pembuangan kita dan mencemari lingkungan.",
+                problemGreenSpaceTitle: "Penyusutan Ruang Hijau",
+                problemGreenSpaceText: "Pembangunan perkotaan mengurangi area hijau vital, berdampak pada keanekaragaman hayati dan kualitas hidup semua penduduk.",
+                problemPollutionTitle: "Pencemaran Air & Sungai",
+                problemPollutionText: "Sungai-sungai kita, urat nadi kota, semakin terkontaminasi, mengancam ekosistem dan kesehatan masyarakat.",
+                goalsSectionTitle: "Misi Kami: Hari Penuh Dampak",
+                goalsSectionIntro: "Kami telah merancang acara komprehensif yang memadukan edukasi dengan langkah-langkah nyata. Tujuan kami ambisius namun dapat dicapai dengan dukungan komunitas dan mitra.",
+                goalAwareness: "Meningkatkan Kesadaran Lingkungan",
+                goalBehavior: "Menginspirasi Perilaku Berkelanjutan",
+                goalSolutions: "Mendidik dengan Solusi Nyata",
+                goalCollaboration: "Ber Kolaborasi Lintas Sektor",
+                activitiesFlowTitle: "Alur Kegiatan Acara",
+                activityWorkshops: "Lokakarya",
+                activityWorkshopsSub: "Sampah, Kompos",
+                activityExhibition: "Pameran Eco",
+                activityExhibitionSub: "Produk Hijau",
+                activityPanel: "Diskusi Panel",
+                activityPanelSub: "Pakar & Pemimpin",
+                activityArtMusic: "Seni & Musik",
+                activityArtMusicSub: "Pertunjukan",
+                activityCleanup: "Aksi Bersih-bersih",
+                activityCleanupSub: "(Aksi Opsional)",
+                participantsSectionTitle: "Melibatkan Seluruh Komunitas",
+                participantsSectionIntro: "Tujuan kami adalah menyatukan beragam kelompok lebih dari 500 individu, menciptakan jaringan yang kuat untuk perubahan. Setiap kelompok memainkan peran vital dalam membangun masa depan yang berkelanjutan bagi Bogor. Grafik di samping menunjukkan target peserta dalam persentase.",
+                participantsTargetNumber: "500+",
+                participantsTargetText: "Target Peserta",
+                participantsChartCaption: "Visualisasi rincian target audiens kami yang beragam.",
+                participantChartLabels: [
+                    'Siswa & Pemuda',
+                    'Komunitas Eco',
+                    'Warga Umum',
+                    'Pemerintah & Media',
+                    'Bisnis Hijau'
+                ],
+                fundingSectionTitle: "Investasi untuk Masa Depan yang Lebih Hijau",
+                fundingSectionIntro: "Untuk menyukseskan acara ini, kami mencari dukungan finansial. Setiap kontribusi secara langsung mendanai aspek-aspek kunci acara, dari logistik hingga materi edukasi, memastikan pengalaman yang berdampak tinggi bagi semua. Grafik di samping menunjukkan alokasi dana dalam persentase.",
+                fundingGoalLabel: "Total Target Dana",
+                fundingGoalAmount: "Rp 40,200,000",
+                fundingChartCaption: "Tampilan proporsional bagaimana dana akan dialokasikan.",
+                fundingChartLabels: [
+                    'Lokasi & Logistik',
+                    'Lokakarya & Materi',
+                    'Promosi & Media',
+                    'Talenta & Pengisi Acara'
+                ],
+                sponsorsSectionTitle: "Manfaat Eksklusif Sponsor",
+                sponsorsSectionIntro: "Bermitra dengan kami dan dapatkan eksposur signifikan sambil menunjukkan komitmen Anda terhadap tanggung jawab sosial perusahaan. Kami menawarkan berbagai manfaat untuk memamerkan merek Anda kepada audiens yang berdedikasi dan terlibat.",
+                sponsorBenefit1Title: "🎁 Logo di Promosi",
+                sponsorBenefit1Text: "Merek Anda ditampilkan di semua materi acara digital dan fisik.",
+                sponsorBenefit2Title: "🎪 Booth Acara Khusus",
+                sponsorBenefit2Text: "Ruang khusus untuk memamerkan produk atau layanan ramah lingkungan Anda.",
+                sponsorBenefit3Title: "🎙️ Penyebutan Verbal",
+                sponsorBenefit3Text: "Pengakuan dari panggung selama momen-momen penting acara.",
+                sponsorBenefit4Title: "📣 Eksposur Media & Sosial",
+                sponsorBenefit4Text: "Termasuk dalam siaran pers dan fitur di saluran media sosial kami.",
+                sponsorBenefit5Title: "🎤 Sesi Berbicara Opsional",
+                sponsorBenefit5Text: "Kesempatan untuk berbagi visi perusahaan Anda dengan audiens kami.",
+                sponsorBenefit6Title: "🤝 Jaringan & Kolaborasi",
+                sponsorBenefit6Text: "Terhubung dengan pemimpin komunitas, bisnis hijau, dan warga yang terlibat.",
+                footerCallToActionTitle: "🌱 Bergabunglah dengan Kami dan Buat Perbedaan!",
+                footerCallToActionText: "Mari berkolaborasi untuk membangun Bogor yang lebih hijau dan sehat. Dukungan Anda sangat penting untuk perubahan positif.",
+                footerWhatsapp: '<i class="fab fa-whatsapp social-icon-fa"></i> 08xx-xxxx-xxxx',
+                footerEmail: '<i class="far fa-envelope social-icon-fa"></i> panitialingkungan2025@gmail.com',
+                footerInstagram: '<i class="fab fa-instagram social-icon-fa"></i> @HariLingkunganBogor',
+                footerTiktok: '<i class="fab fa-tiktok social-icon-fa"></i> @HariLingkunganBogorTikTok'
+            },
+            en: {
+                pageTitle: "World Environment Day 2025 - Bogor Infographic",
+                headerTitle: "World Environment Day 2025",
+                headerSubtitle: "“Education & Action for a Better Future”",
+                headerLocation: "📍 Taman Sempur, Bogor",
+                headerDate: "📅 June 8, 2025",
+                problemSectionTitle: "Bogor's Environmental Challenge",
+                problemSectionIntro: "Our community is at a critical juncture, facing environmental pressures that require immediate and collective action. This event is our response to these urgent local issues.",
+                problemWasteTitle: "Increasing Waste",
+                problemWasteText: "Household and commercial waste levels are rising, straining our disposal systems and polluting our landscapes.",
+                problemGreenSpaceTitle: "Shrinking Green Spaces",
+                problemGreenSpaceText: "Urban development is reducing vital green areas, impacting biodiversity and the quality of life for all residents.",
+                problemPollutionTitle: "Water & River Pollution",
+                problemPollutionText: "Our rivers, the lifelines of our city, are increasingly contaminated, threatening both ecosystems and public health.",
+                goalsSectionTitle: "Our Mission: A Day of Impact",
+                goalsSectionIntro: "We've designed a comprehensive event that blends education with actionable steps. Our goals are ambitious but achievable with community and partner support.",
+                goalAwareness: "Raise Environmental Awareness",
+                goalBehavior: "Inspire Sustainable Behavior",
+                goalSolutions: "Educate with Real Solutions",
+                goalCollaboration: "Collaborate Across Sectors",
+                activitiesFlowTitle: "Event Activities Flow",
+                activityWorkshops: "Workshops",
+                activityWorkshopsSub: "Waste, Compost",
+                activityExhibition: "Eco-friendly Exhibition",
+                activityExhibitionSub: "Green Products",
+                activityPanel: "Panel Discussion",
+                activityPanelSub: "Experts & Leaders",
+                activityArtMusic: "Art & Music Performance",
+                activityArtMusicSub: "Performances",
+                activityCleanup: "Clean-Up Action",
+                activityCleanupSub: "(Optional Action)",
+                participantsSectionTitle: "Engaging the Entire Community",
+                participantsSectionIntro: "Our goal is to bring together a diverse group of over 500 individuals, creating a powerful network for change. Each group plays a vital role in building a sustainable future for Bogor. The chart on the side shows participant targets in percentages.",
+                participantsTargetNumber: "500+",
+                participantsTargetText: "Participants Targeted",
+                participantChartCaption: "A visual breakdown of our diverse target audience.",
+                participantChartLabels: [
+                    'Students & Youth',
+                    'Eco-communities',
+                    'Public Citizens',
+                    'Government & Media',
+                    'Green Businesses'
+                ],
+                fundingSectionTitle: "Investment for a Greener Future",
+                fundingSectionIntro: "To make this event a success, we are seeking financial support. Every contribution directly funds key aspects of the event, from logistics to educational materials, ensuring a high-impact experience for all. The chart on the side shows funding allocation in percentages.",
+                fundingGoalLabel: "Total Funding Goal",
+                fundingGoalAmount: "Rp 40,200,000",
+                fundingChartCaption: "A proportional view of how funding will be allocated.",
+                fundingChartLabels: [
+                    'Venue & Logistics',
+                    'Workshops & Materials',
+                    'Promotion & Media',
+                    'Talent & Performers'
+                ]
+                ,
+                sponsorsSectionTitle: "Exclusive Sponsor Benefits",
+                sponsorsSectionIntro: "Partner with us and gain significant exposure while demonstrating your commitment to corporate social responsibility. We offer a range of benefits to showcase your brand to a dedicated and engaged audience.",
+                sponsorBenefit1Title: "🎁 Logo on Promotions",
+                sponsorBenefit1Text: "Your brand featured on all digital and physical event materials.",
+                sponsorBenefit2Title: "🎪 Special Event Booth",
+                sponsorBenefit2Text: "A dedicated space to exhibit your eco-friendly products or services.",
+                sponsorBenefit3Title: "🎙️ Verbal Mentions",
+                sponsorBenefit3Text: "Acknowledgement from the stage during key moments of the event.",
+                sponsorBenefit4Title: "📣 Media & Social Exposure",
+                sponsorBenefit4Text: "Inclusion in press releases and features on our social media channels.",
+                sponsorBenefit5Title: "🎤 Optional Speaking Slot",
+                sponsorBenefit5Text: "An opportunity to share your company's vision with our audience.",
+                sponsorBenefit6Title: "🤝 Network & Collaborate",
+                sponsorBenefit6Text: "Connect with community leaders, green businesses, and engaged citizens.",
+                footerCallToActionTitle: "🌱 Join Us and Make a Difference!",
+                footerCallToActionText: "Let’s collaborate to build a greener, healthier Bogor. Your support is crucial for positive change.",
+                footerWhatsapp: '<i class="fab fa-whatsapp social-icon-fa"></i> 08xx-xxxx-xxxx',
+                footerEmail: '<i class="far fa-envelope social-icon-fa"></i> panitialingkungan2025@gmail.com',
+                footerInstagram: '<i class="fab fa-instagram social-icon-fa"></i> @HariLingkunganBogor',
+                footerTiktok: '<i class="fab fa-tiktok social-icon-fa"></i> @HariLingkunganBogorTikTok'
+            }
+        };
+
+        const wrapLabel = (str, maxLen = 16) => {
+            if (str.length <= maxLen) {
+                return str;
+            }
+            const words = str.split(' ');
+            const lines = [];
+            let currentLine = '';
+            for (const word of words) {
+                if ((currentLine + ' ' + word).trim().length > maxLen && currentLine.length > 0) {
+                    lines.push(currentLine);
+                    currentLine = word;
+                } else {
+                    currentLine = (currentLine + ' ' + word).trim();
+                }
+            }
+            if (currentLine.length > 0) {
+                lines.push(currentLine);
+            }
+            return lines;
+        };
+
+        const tooltipConfig = {
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        title: function(tooltipItems) {
+                            const item = tooltipItems[0];
+                            let label = item.chart.data.labels[item.dataIndex];
+                            if (Array.isArray(label)) {
+                                return label.join(' ');
+                            } else {
+                                return label;
+                            }
+                        },
+                        label: function(context) {
+                            let label = context.label;
+                            if (Array.isArray(label)) {
+                                label = label.join(' ');
+                            }
+                            const value = context.raw;
+                            return `${label}: ${value}%`;
+                        }
+                    }
+                },
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                       boxWidth: 20,
+                       padding: 20
+                    }
+                }
+            }
+        };
+        
+        // Environmental Theme Palette
+        const environmentalPalette = ['#2E8B57', '#4682B4', '#90EE90', '#F5F5DC', '#FFFFFF']; // Dark Green, Steel Blue, Light Green, Beige, White
+
+        // Function to animate a number count-up
+        function animateValue(obj, start, end, duration) {
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                obj.textContent = Math.floor(progress * (end - start) + start);
+                if (progress < 1) {
+                    window.requestAnimationFrame(step);
+                }
+            };
+            window.requestAnimationFrame(step);
+        }
+
+        // Intersection Observer for scroll animations
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.1 // Trigger when 10% of the element is visible
+        };
+
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    // Apply animation classes
+                    if (entry.target.hasAttribute('data-animate')) {
+                        entry.target.classList.add('animate-fade-in-up');
+                    }
+                    if (entry.target.classList.contains('animate-fade-in-scale')) {
+                        entry.target.classList.add('animate-fade-in-scale');
+                    }
+                    if (entry.target.classList.contains('animate-fade-in-left')) {
+                        entry.target.classList.add('animate-fade-in-left');
+                    }
+                    if (entry.target.classList.contains('animate-fade-in-right')) {
+                        entry.target.classList.add('animate-fade-in-right');
+                    }
+                    
+                    // Special handling for flow steps
+                    if (entry.target.id === 'flow-steps-container') {
+                        Array.from(entry.target.children).forEach((step, index) => {
+                            step.style.animation = `fadeInSlideUp 0.5s ease-out forwards ${0.1 * index}s`;
+                        });
+                    }
+
+                    // Number count-up animation
+                    if (entry.target.id === 'participantCount') {
+                        const targetNumber = 500; // Hardcode target number for animation
+                        animateValue(entry.target, 0, targetNumber, 1500); // Animate to 500 in 1.5 seconds
+                        // Add the plus sign after animation
+                        setTimeout(() => {
+                            entry.target.textContent += '+';
+                        }, 1500);
+                    }
+
+                    observer.unobserve(entry.target); // Stop observing once animated
+                }
+            });
+        }, observerOptions);
+
+        function updateCharts(lang) {
+            const participantData = [35, 25, 20, 10, 10];
+            const fundingData = [40, 25, 20, 15];
+
+            if (participantChartInstance) {
+                participantChartInstance.destroy();
+            }
+            if (fundingChartInstance) {
+                fundingChartInstance.destroy();
+            }
+
+            const participantCtx = document.getElementById('participantChart').getContext('2d');
+            participantChartInstance = new Chart(participantCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: translations[lang].participantChartLabels.map((label, index) => {
+                        const percentage = ((participantData[index] / 100) * 100).toFixed(0) + '%';
+                        return wrapLabel(`${label} (${percentage})`); // Add percentage to label
+                    }),
+                    datasets: [{
+                        label: translations[lang].participantChartLabels, 
+                        data: participantData,
+                        backgroundColor: environmentalPalette, // Using the new palette
+                        borderColor: '#E6F3E6', // Match body background
+                        borderWidth: 4,
+                        hoverOffset: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '60%',
+                    ...tooltipConfig
+                }
+            });
+
+            const fundingCtx = document.getElementById('fundingChart').getContext('2d');
+            fundingChartInstance = new Chart(fundingCtx, {
+                type: 'pie',
+                data: {
+                    labels: translations[lang].fundingChartLabels.map((label, index) => {
+                        const percentage = ((fundingData[index] / 100) * 100).toFixed(0) + '%';
+                        return wrapLabel(`${label} (${percentage})`); // Add percentage to label
+                    }),
+                    datasets: [{
+                        label: translations[lang].fundingChartLabels, 
+                        data: fundingData,
+                        backgroundColor: environmentalPalette, // Using the new palette
+                        borderColor: '#FFFFFF', // White for contrast
+                        borderWidth: 4,
+                        hoverOffset: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    ...tooltipConfig
+                }
+            });
+        }
+
+        function setLanguage(lang) {
+            document.documentElement.lang = lang;
+            document.getElementById('pageTitle').textContent = translations[lang].pageTitle;
+            document.querySelectorAll('[data-lang-key]').forEach(element => {
+                const key = element.getAttribute('data-lang-key');
+                // Skip updating participantCount here, as its animation handles its content
+                if (element.id === 'participantCount') {
+                    return;
+                }
+                // For footer social media links, update innerHTML to include Font Awesome icon tags
+                if (key === 'footerWhatsapp' || key === 'footerEmail' || key === 'footerInstagram' || key === 'footerTiktok') {
+                    element.innerHTML = translations[lang][key];
+                } else if (translations[lang][key]) {
+                    element.textContent = translations[lang][key];
+                }
+            });
+
+            // Reset participant count to '0' to re-trigger animation on language change
+            const participantCountElement = document.getElementById('participantCount');
+            if (participantCountElement) {
+                participantCountElement.textContent = '0';
+                observer.unobserve(participantCountElement); // Unobserve to re-trigger
+                observer.observe(participantCountElement); // Re-observe for animation
+            }
+
+            document.getElementById('flagId').classList.remove('active');
+            document.getElementById('flagEn').classList.remove('active');
+            document.getElementById(`flag${lang === 'id' ? 'Id' : 'En'}`).classList.add('active');
+
+            updateCharts(lang);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('flagId').addEventListener('click', () => setLanguage('id'));
+            document.getElementById('flagEn').classList.add('active'); // Add active class to English flag initially
+            document.getElementById('flagEn').addEventListener('click', () => setLanguage('en'));
+            
+            // Set initial language to Indonesian
+            setLanguage('id'); 
+
+            // Observe elements for animations
+            document.querySelectorAll('[data-animate]').forEach(el => {
+                observer.observe(el);
+            });
+
+            // Observe flow steps container specifically
+            const flowStepsContainer = document.getElementById('flow-steps-container');
+            if (flowStepsContainer) { // Ensure it exists before observing
+                observer.observe(flowStepsContainer);
+            }
+            // Observe participant count for animation
+            const participantCountElement = document.getElementById('participantCount');
+            if (participantCountElement) { // Ensure it exists before observing
+                observer.observe(participantCountElement);
+            }
+        });
+    </script>
+</body>
+</html>
